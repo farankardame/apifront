@@ -10,9 +10,9 @@ var https = require('https');
 var crypto = require('crypto');
 var request = require('request');
 
-app.set('port', process.env.PORT || 5000);
+//app.set('port', process.env.PORT || 5000);
 
-//var port = 5000;
+var port = process.env.PORT || 5000;
 
 app.use(express.static('public'));
 app.use(bodyParser());
@@ -32,9 +32,9 @@ app.post('/askDWP',function(req, res, next){
     
 });
 
-//app.listen(5000, function(err){
-  //  console.log('running server on port ' + port);
-//});
+app.listen(port, function(err){
+    console.log('running server on port ' + port);
+});
 
 
 function askDobQuestion(custNino, custDob, res) {	
