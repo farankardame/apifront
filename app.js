@@ -25,10 +25,10 @@ app.get('/', function(req, res){
     res.render('index', {result:result});
 });
 
-app.post('/askDWP',function(req, res, next){
+app.post('/ask',function(req, res, next){
     var nino = req.body.nino;
     var dob = req.body.dob;
-    var result = askDobQuestion(nino, dob, res);
+    askDobQuestion(nino, dob, res);
     
 });
 
@@ -37,27 +37,33 @@ app.listen(port, function(err){
 });
 
 
-function askDobQuestion(custNino, custDob, res) {	
-
-  var response = 'Test';
+function askDobQuestion(custNino, custDob, res) {
+    
+if(custNino != ''){   
   performRequest('/cis/customer', 'GET', {
     nino: custNino,
     apikey: 'im2IurZLr5YT2dgsmKPXGJcnMsn9ado8'
   }, function(data) {
-    console.log('Fetched Json' + data);
+    console.log('Fetched Json ' + data);
 	var responseObject = JSON.parse(data);
-	var tempDob = responseObject.getCustomerResponse.customer.dob.replace('Z','');
-	var newDob = tempDob.substring(8,10)+"-"+tempDob.substring(5,7)+"-"+tempDob.substring(0,4);
-	console.log("newDob "+newDob);
-    console.log("custDob "+custDob);
-	var textResp = "Sorry I am not sure who you are please try again";
-	if (newDob == custDob){
-	   textResp = "Hi " +responseObject.getCustomerResponse.customer.firstName+"               "+responseObject.getCustomerResponse.customer.lastName+", "+" your next payment is "+responseObject.getCustomerResponse.customer.amount+" and due on "+responseObject.getCustomerResponse.customer.paymentDate.replace('Z','');
+    var textResp = "Sorry I am not sure who you are please try again";
+    console.log("responseObject.getCustomerResponse "+responseObject.getCustomerResponse);
+    if(responseObject.getCustomerResponse != 'NULL'){        
+        var tempDob = responseObject.getCustomerResponse.customer.dob.replace('Z','');
+        var newDob = tempDob.substring(8,10)+"-"+tempDob.substring(5,7)+"-"+tempDob.substring(0,4);
+        console.log("newDob "+newDob);
+        console.log("custDob "+custDob);        
+        if (newDob == custDob){
+           textResp = "Hi " +responseObject.getCustomerResponse.customer.firstName+"               "+responseObject.getCustomerResponse.customer.lastName+", "+" your next payment is "+responseObject.getCustomerResponse.customer.amount+" and due on "+responseObject.getCustomerResponse.customer.paymentDate.replace('Z','');        
+        }	
 	}
     res.render('index', {nino: custNino, dob: custDob, result: textResp});
   });
-    
-  return response;
+}
+else{
+    var textResp = "Sorry I am not sure who you are please try again";
+    res.render('index', {nino: custNino, dob: custDob, result: textResp});
+}
 }
 
 function performRequest(endpoint, method, data, success) {
