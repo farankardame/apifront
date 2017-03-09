@@ -46,7 +46,7 @@ if(custNino != ''){
   }, function(data) {
     console.log('Fetched Json ' + data);
 	var responseObject = JSON.parse(data);
-    var textResp = "Sorry I am not sure who you are please try again";
+    var textResp = "Sorry I am not able to find your details, please try again";
     console.log("responseObject.getCustomerResponse "+responseObject.getCustomerResponse);
     if(responseObject.getCustomerResponse != 'NULL'){        
         var tempDob = responseObject.getCustomerResponse.customer.dob.replace('Z','');
@@ -61,7 +61,7 @@ if(custNino != ''){
   });
 }
 else{
-    var textResp = "Sorry I am not sure who you are please try again";
+    var textResp = "Sorry I am not able to find your details, please try again";
     res.render('index', {nino: custNino, dob: custDob, result: textResp});
 }
 }
